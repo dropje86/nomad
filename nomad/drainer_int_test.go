@@ -38,7 +38,7 @@ func allocPromoter(t *testing.T, ctx context.Context,
 		// For each alloc that doesn't have its deployment status set, set it
 		var updates []*structs.Allocation
 		for _, alloc := range allocs {
-			if alloc.DeploymentStatus != nil && alloc.DeploymentStatus.Healthy != nil {
+			if alloc.DeploymentStatus.HasHealth() {
 				continue
 			}
 
