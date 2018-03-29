@@ -584,13 +584,16 @@ func TestAllocRunner_RetryArtifact(t *testing.T) {
 
 	testutil.WaitForResult(func() (bool, error) {
 		count, last := upd.Last()
-		if min := 6; count < min {
-			return false, fmt.Errorf("Not enough updates (%d < %d)", count, min)
+		if count == 0 {
+			return false, fmt.Errorf("no updates")
 		}
 
 		// web task should have completed successfully while bad task
 		// retries artifact fetching
-		webstate := last.TaskStates["web"]
+		webstate, ok := last.TaskStates["web"]
+		if !ok {
+			return false, fmt.Errorf("no task state for web")
+		}
 		if webstate.State != structs.TaskStateDead {
 			return false, fmt.Errorf("expected web to be dead but found %q", last.TaskStates["web"].State)
 		}
